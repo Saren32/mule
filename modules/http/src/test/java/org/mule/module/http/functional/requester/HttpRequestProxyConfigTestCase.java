@@ -16,7 +16,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import org.mule.api.MessagingException;
 import org.mule.construct.Flow;
 import org.mule.module.http.api.requester.proxy.ProxyConfig;
-import org.mule.module.http.internal.request.DefaultHttpRequester;
+import org.mule.module.http.internal.request.HttpRequester;
 import org.mule.module.http.internal.request.NtlmProxyConfig;
 import org.mule.tck.junit4.FunctionalTestCase;
 import org.mule.tck.junit4.rule.DynamicPort;
@@ -115,7 +115,7 @@ public class HttpRequestProxyConfigTestCase extends FunctionalTestCase
 
     private void checkProxyConfig(Flow flow)
     {
-        DefaultHttpRequester httpRequester = (DefaultHttpRequester) flow.getMessageProcessors().get(0);
+        HttpRequester httpRequester = (HttpRequester) flow.getMessageProcessors().get(0);
         ProxyConfig proxyConfig = httpRequester.getConfig().getProxyConfig();
 
         assertThat(proxyConfig.getHost(), is(PROXY_HOST));

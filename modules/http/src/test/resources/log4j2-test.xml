@@ -22,6 +22,8 @@
         <AsyncLogger name="org.mule.module.http" level="WARN"/>
         <AsyncLogger name="com.mulesoft" level="WARN"/>
 
+<!--         <AsyncLogger name="com.ning.http" level="DEBUG" /> -->
+        
         <AsyncRoot level="INFO">
             <AppenderRef ref="Console"/>
         </AsyncRoot>

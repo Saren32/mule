@@ -25,6 +25,121 @@
         </xsd:appinfo>
     </xsd:annotation>
 
+    <xsd:element name="event-stream-listener" type="eventStreamListenerType" substitutionGroup="mule:abstract-message-source">
+        <xsd:annotation>
+            <xsd:documentation>
+                Listener for incoming Server-Sent events.
+            </xsd:documentation>
+        </xsd:annotation>
+    </xsd:element>
+
+    <xsd:complexType name="eventStreamListenerType">
+        <xsd:complexContent>
+            <xsd:extension base="mule:abstractMessageSourceType">
+                <xsd:sequence>
+                    <xsd:element name="request-builder" minOccurs="0" maxOccurs="1" type="requestBuilderType">
+                        <xsd:annotation>
+                            <xsd:documentation>
+                                Contains the definition of all the parameters that should be sent in the request (uri params,
+                                query params and headers).
+                            </xsd:documentation>
+                        </xsd:annotation>
+                    </xsd:element>
+
+                    <xsd:choice>
+                        <xsd:element name="success-status-code-validator" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures error handling of the response based on the status code.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="values" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Status codes that will be considered as successful. Other status codes in the response will
+                                            cause the component to throw an exception.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+
+                        <xsd:element name="failure-status-code-validator" minOccurs="0" maxOccurs="1">
+                            <xsd:annotation>
+                                <xsd:documentation>
+                                    Configures error handling of the response based on the status code.
+                                </xsd:documentation>
+                            </xsd:annotation>
+                            <xsd:complexType>
+                                <xsd:attribute name="values" type="xsd:string" use="required">
+                                    <xsd:annotation>
+                                        <xsd:documentation>
+                                            Status codes that will be considered as failures. Responses with these status codes will
+                                            cause the component to throw an exception.
+                                        </xsd:documentation>
+                                    </xsd:annotation>
+                                </xsd:attribute>
+                            </xsd:complexType>
+                        </xsd:element>
+                    </xsd:choice>
+
+                    <xsd:element name="worker-threading-profile" type="mule:asynchronousThreadingProfileType" minOccurs="0" maxOccurs="1"/>
+                </xsd:sequence>
+
+                <xsd:attributeGroup ref="commonRequestAttributes" />
+
+                <xsd:attribute name="path" type="xsd:string" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            Path where the request will be sent.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+<!--                 <xsd:attribute name="method" type="xsd:string"> -->
+<!--                     <xsd:annotation> -->
+<!--                         <xsd:documentation> -->
+<!--                             The HTTP method for the request. -->
+<!--                         </xsd:documentation> -->
+<!--                     </xsd:annotation> -->
+<!--                 </xsd:attribute> -->
+                <xsd:attribute name="config-ref" type="xsd:string" use="required">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            A reference to the configuration element for this requester. If no reference is provided,
+                            a default configuration will be created.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+<!--                 <xsd:attribute name="source" type="xsd:string"> -->
+<!--                     <xsd:annotation> -->
+<!--                         <xsd:documentation> -->
+<!--                             The expression used to obtain the body that will be sent in the request. Default is -->
+<!--                             empty, so the payload will be used as the body. -->
+<!--                         </xsd:documentation> -->
+<!--                     </xsd:annotation> -->
+<!--                 </xsd:attribute> -->
+<!--                 <xsd:attribute name="target" type="xsd:string" default="#[payload]"> -->
+<!--                     <xsd:annotation> -->
+<!--                         <xsd:documentation> -->
+<!--                             The enricher expression used to enrich the current message with the body -->
+<!--                             of the response. Default is "#[payload]", so after processing the response, the contents -->
+<!--                             of its body will be set as payload of the message. -->
+<!--                         </xsd:documentation> -->
+<!--                     </xsd:annotation> -->
+<!--                 </xsd:attribute> -->
+
+                <xsd:attribute name="objectStore-ref" type="xsd:string" use="optional">
+                    <xsd:annotation>
+                        <xsd:documentation>
+                            References an object store to use for storing internal SSE data.
+                        </xsd:documentation>
+                    </xsd:annotation>
+                </xsd:attribute>
+            </xsd:extension>
+        </xsd:complexContent>
+    </xsd:complexType>
+
     <xsd:element name="listener" type="listenerType" substitutionGroup="mule:abstract-message-source">
         <xsd:annotation>
             <xsd:documentation>

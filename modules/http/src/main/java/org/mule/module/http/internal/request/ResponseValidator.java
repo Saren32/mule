@@ -11,6 +11,8 @@ import org.mule.api.MuleEvent;
 public interface ResponseValidator
 {
 
+    public boolean isValid(int value);
+
     public void validate(MuleEvent responseEvent) throws ResponseValidatorException;
 
 }

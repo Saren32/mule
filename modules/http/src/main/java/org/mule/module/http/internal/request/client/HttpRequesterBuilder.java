@@ -18,6 +18,7 @@ import org.mule.module.http.api.requester.HttpRequesterConfigBuilder;
 import org.mule.module.http.api.requester.HttpStreamingType;
 import org.mule.module.http.internal.request.DefaultHttpRequester;
 import org.mule.module.http.internal.request.DefaultHttpRequesterConfig;
+import org.mule.module.http.internal.request.HttpRequester;
 import org.mule.transport.ssl.DefaultTlsContextFactory;
 import org.mule.transport.ssl.api.TlsContextFactory;
 import org.mule.util.ObjectNameHelper;

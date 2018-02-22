@@ -60,7 +60,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-public class DefaultHttpRequester extends AbstractNonBlockingMessageProcessor implements Initialisable, MuleContextAware, FlowConstructAware, DebugInfoProvider
+public class DefaultHttpRequester extends AbstractNonBlockingMessageProcessor implements Initialisable, MuleContextAware, FlowConstructAware, DebugInfoProvider, HttpRequester
 {
 
     public static final List<String> DEFAULT_EMPTY_BODY_METHODS = Lists.newArrayList("GET", "HEAD", "OPTIONS");
@@ -419,7 +419,7 @@ public class DefaultHttpRequester extends AbstractNonBlockingMessageProcessor im
         return String.format("Error sending HTTP request to %s", httpRequest.getUri());
     }
 
-    private HttpClient getHttpClient()
+    public HttpClient getHttpClient()
     {
         return requestConfig.getHttpClient();
     }
@@ -605,6 +605,10 @@ public class DefaultHttpRequester extends AbstractNonBlockingMessageProcessor im
         this.method = new AttributeEvaluator(method);
     }
 
+    /* (non-Javadoc)
+     * @see org.mule.module.http.internal.request.HttpRequester#getConfig()
+     */
+    @Override
     public DefaultHttpRequesterConfig getConfig()
     {
         return requestConfig;

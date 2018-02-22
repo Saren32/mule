@@ -26,6 +26,7 @@ import org.mule.module.http.internal.request.HttpAuthenticationType;
 import org.mule.module.http.internal.request.NtlmProxyConfig;
 import org.mule.module.http.internal.request.RamlApiConfiguration;
 import org.mule.module.http.internal.request.SuccessStatusCodeValidator;
+import org.mule.module.http.internal.sse.DefaultHttpEventStreamListener;
 
 public class HttpNamespaceHandler extends AbstractMuleNamespaceHandler
 {
@@ -67,5 +68,9 @@ public class HttpNamespaceHandler extends AbstractMuleNamespaceHandler
         registerBeanDefinitionParser("raml-api-configuration", new ChildDefinitionParser("apiConfiguration", RamlApiConfiguration.class));
         registerBeanDefinitionParser("worker-threading-profile", new HttpThreadingProfileDefinitionParser("workerThreadingProfile",  MuleProperties.OBJECT_DEFAULT_MESSAGE_RECEIVER_THREADING_PROFILE));
         registerBeanDefinitionParser("config", new ChildDefinitionParser("extension", HttpConfiguration.class));
+
+        registerBeanDefinitionParser("event-stream-listener", new ChildDefinitionParser("messageSource", DefaultHttpEventStreamListener.class));
+
+    
     }
 }

@@ -439,7 +439,7 @@ public class GrizzlyHttpClient implements HttpClient
         return responseBuilder.build();
     }
 
-    private Request createGrizzlyRequest(final HttpRequest request, final int responseTimeout, final boolean followRedirects,
+    public Request createGrizzlyRequest(final HttpRequest request, final int responseTimeout, final boolean followRedirects,
                                          final HttpRequestAuthentication authentication)
             throws IOException
     {
@@ -831,4 +831,8 @@ public class GrizzlyHttpClient implements HttpClient
         }
     }
 
+    public AsyncHttpClient getAsyncHttpClient()
+    {
+        return asyncHttpClient;
+    }
 }

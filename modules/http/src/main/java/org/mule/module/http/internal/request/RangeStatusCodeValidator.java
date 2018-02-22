@@ -6,9 +6,23 @@
  */
 package org.mule.module.http.internal.request;
 
+import org.mule.api.MuleEvent;
+import org.mule.module.http.api.HttpConstants;
+
 public abstract class RangeStatusCodeValidator implements ResponseValidator
 {
     private String values;
+
+    @Override
+    public void validate(MuleEvent responseEvent) throws ResponseValidatorException
+    {
+        int status = responseEvent.getMessage().getInboundProperty(HttpConstants.ResponseProperties.HTTP_STATUS_PROPERTY);
+
+        if (!isValid(status))
+        {
+            throw new ResponseValidatorException(String.format("Response code %d mapped as failure", status), responseEvent);
+        }
+    }
 
     protected boolean belongs(int value)
     {
@@ -40,7 +54,7 @@ public abstract class RangeStatusCodeValidator implements ResponseValidator
 
         return false;
     }
-
+    
     public String getValues()
     {
         return values;

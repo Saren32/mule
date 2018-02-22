@@ -6,13 +6,11 @@
  */
 package org.mule.module.http.internal.request;
 
-public class FailureStatusCodeValidator extends RangeStatusCodeValidator
+public interface HttpRequester
 {
 
-    @Override
-    public boolean isValid(int status)
-    {
-        return !belongs(status);
-    }
+    DefaultHttpRequesterConfig getConfig();
+
+    HttpRequesterRequestBuilder getRequestBuilder();
 
 }

@@ -16,6 +16,7 @@ public class HttpRequestBuilderDefinitionParser extends ParentContextDefinitionP
     public HttpRequestBuilderDefinitionParser()
     {
         super("request", new ChildDefinitionParser("request-builder", HttpRequesterRequestBuilder.class));
+        and("event-stream-listener", new ChildDefinitionParser("request-builder", HttpRequesterRequestBuilder.class));
         otherwise(new MuleOrphanDefinitionParser(HttpRequesterRequestBuilder.class, true));
     }
 

@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mule xmlns="http://www.mulesoft.org/schema/mule/core"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xmlns:http="http://www.mulesoft.org/schema/mule/http"
+      xmlns:vm="http://www.mulesoft.org/schema/mule/vm"
+      xmlns:spring="http://www.springframework.org/schema/beans"
+      xsi:schemaLocation="
+               http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+               http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+               http://www.mulesoft.org/schema/mule/vm http://www.mulesoft.org/schema/mule/vm/current/mule-vm.xsd
+               http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-current.xsd">
+
+    <spring:bean name="customObjectStore" class="org.mule.util.store.SimpleMemoryObjectStore"/>
+
+    <http:request-config name="requestConfigFull" protocol="HTTP">
+        <http:basic-authentication username="johndoe" password="pass" preemptive="true" />
+    </http:request-config>
+
+    <http:request-builder name="req1">
+        <http:query-param paramName="queryParam1" value="testValue1" />
+        <http:header headerName="testHeader1" value="headerValue1" />
+        <http:uri-param paramName="up1" value="up1v"/>
+    </http:request-builder>
+
+    <flow name="sseConsumer" initialState="stopped">
+        <http:event-stream-listener
+                config-ref="requestConfigFull"
+                objectStore-ref="customObjectStore"
+                host="localhost" port="${serverPort}" followRedirects="false"
+                responseTimeout="10000"
+                path="/sse/{up1}">
+            <http:request-builder>
+                <http:builder ref="req1" />
+            </http:request-builder>
+            <http:success-status-code-validator values="0..399" />
+        </http:event-stream-listener>
+
+        <copy-properties propertyName="*"/>
+        <vm:outbound-endpoint path="out"/>
+    </flow>
+
+    <flow name="sseConsumerRedirected" initialState="stopped">
+        <http:event-stream-listener
+                config-ref="requestConfigFull"
+                objectStore-ref="customObjectStore"
+                host="localhost" port="${serverRedirectPort}" followRedirects="true"
+                responseTimeout="10000"
+                path="/sse/{up1}">
+            <http:request-builder>
+                <http:builder ref="req1" />
+            </http:request-builder>
+            <http:success-status-code-validator values="0..399" />
+        </http:event-stream-listener>
+
+        <copy-properties propertyName="*"/>
+        <vm:outbound-endpoint path="outRedirect"/>
+    </flow>
+
+
+    <http:listener-config name="proxyConfig" host="localhost" port="${proxyPort}" />
+    <http:request-config name="requestBehindProxyConfig" host="localhost" port="${serverBehindProxyPort}" />
+
+    <http:request-config name="requestConfigProxy" protocol="HTTP">
+        <http:proxy host="localhost" port="${proxyPort}" />
+    </http:request-config>
+
+    <flow name="proxyTemplate">
+        <http:listener config-ref="proxyConfig" path="/*" responseStreamingMode="AUTO" parseRequest="false" >
+            <http:response-builder statusCode="#[message.inboundProperties['http.status']]" reasonPhrase="#[message.inboundProperties['http.reason']]" />
+        </http:listener>
+
+        <copy-properties propertyName="*" />
+        <remove-property propertyName="http.*" />
+        <copy-attachments attachmentName="*" />
+
+        <set-property propertyName="X-Forwarded-For" value="#[message.inboundProperties['http.remote.address']]" />
+
+        <http:request config-ref="requestBehindProxyConfig" method="#[message.inboundProperties['http.method']]" path="#[message.inboundProperties['http.request.path']]" parseResponse="false" >
+            <http:request-builder>
+                <http:query-params expression="#[message.inboundProperties['http.query.params']]" />
+            </http:request-builder>
+        </http:request>
+
+        <copy-properties propertyName="*" />
+        <remove-property propertyName="http.*" />
+        <copy-attachments attachmentName="*" />
+    </flow>
+
+    <flow name="sseConsumerThroughProxy" initialState="stopped">
+        <http:event-stream-listener
+                config-ref="requestConfigProxy"
+                objectStore-ref="customObjectStore"
+                host="localhost" port="${serverBehindProxyPort}" followRedirects="true"
+                responseTimeout="10000"
+                path="/sse">
+        </http:event-stream-listener>
+
+        <copy-properties propertyName="*"/>
+        <vm:outbound-endpoint path="outProxy"/>
+    </flow>
+
+</mule>
