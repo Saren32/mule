@@ -605,9 +605,6 @@ public class DefaultHttpRequester extends AbstractNonBlockingMessageProcessor im
         this.method = new AttributeEvaluator(method);
     }
 
-    /* (non-Javadoc)
-     * @see org.mule.module.http.internal.request.HttpRequester#getConfig()
-     */
     @Override
     public DefaultHttpRequesterConfig getConfig()
     {
